@@ -56,12 +56,12 @@ describe('tema', () => {
     it('un cambio en caliente repinta lo ya montado', () => {
         render(<TextInputComponent type="text" name="a" label="A" value="" onChange={() => {}} />)
 
-        expect(screen.getByLabelText('A')).toHaveClass('uk-input')
+        expect(screen.getByLabelText('A')).toHaveClass(defaultTheme.input)
 
         act(() => setTheme({ input: 'oscuro' }))
 
         expect(screen.getByLabelText('A')).toHaveClass('oscuro')
-        expect(screen.getByLabelText('A')).not.toHaveClass('uk-input')
+        expect(screen.getByLabelText('A')).not.toHaveClass(defaultTheme.input)
     })
 
     it('alcanza a los envoltorios y a la etiqueta', () => {
@@ -113,7 +113,7 @@ describe('tema', () => {
 
         render(<TextInputComponent type="text" name="a" label="A" value="" onChange={() => {}} />)
 
-        expect(screen.getByLabelText('A')).toHaveClass('uk-input')
+        expect(screen.getByLabelText('A')).toHaveClass(defaultTheme.input)
     })
 })
 
