@@ -1,0 +1,68 @@
+{
+  "name": "innoboxrr-react-form-elements",
+  "version": "1.0.0",
+  "description": "Gemelo React de innoboxrr-form-elements: los mismos componentes, los mismos nombres y el mismo contrato.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./src/*": "./src/*"
+  },
+  "files": [
+    "index.js",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/innoboxrr/react-form-elements.git"
+  },
+  "keywords": [
+    "react",
+    "react19",
+    "form",
+    "elements",
+    "innoboxrr"
+  ],
+  "author": "Homero Raul Vargas Cruz",
+  "license": "MIT",
+  "peerDependencies": {
+    "@codemirror/commands": "^6.0.0",
+    "@codemirror/lang-css": "^6.0.0",
+    "@codemirror/lang-html": "^6.0.0",
+    "@codemirror/lang-javascript": "^6.0.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/state": "^6.0.0",
+    "@codemirror/view": "^6.0.0",
+    "@tinymce/tinymce-react": "^5.0.0 || ^6.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@codemirror/commands": { "optional": true },
+    "@codemirror/lang-css": { "optional": true },
+    "@codemirror/lang-html": { "optional": true },
+    "@codemirror/lang-javascript": { "optional": true },
+    "@codemirror/lang-json": { "optional": true },
+    "@codemirror/state": { "optional": true },
+    "@codemirror/view": { "optional": true },
+    "@tinymce/tinymce-react": { "optional": true }
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^5.0.0",
+    "jsdom": "^25.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vite": "^7.1.0",
+    "vitest": "^3.0.0"
+  }
+}

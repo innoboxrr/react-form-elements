@@ -1,0 +1,187 @@
+/**
+ * Los estilos que en el paquete Vue viven en los bloques <style scoped>.
+ *
+ * React no tiene scoped styles, así que se publican como una hoja única que la
+ * aplicación importa una vez. Los selectores llevan prefijo `fe-` para que no
+ * choquen con nada del anfitrión.
+ */
+
+.fe-input-wrap {
+    position: relative;
+    width: 100%;
+}
+
+/* Deja sitio a la derecha para que el texto no pase por debajo del ojo. */
+.fe-input-wrap .fe-has-toggle {
+    padding-right: 2.75rem;
+}
+
+.fe-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    z-index: 2;
+}
+
+.fe-password-toggle:hover {
+    color: #111827;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.fe-password-toggle:focus {
+    outline: none;
+}
+
+.dark .fe-password-toggle,
+html.dark .fe-password-toggle {
+    color: #94a3b8;
+}
+
+.dark .fe-password-toggle:hover,
+html.dark .fe-password-toggle:hover {
+    color: #f1f5f9;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.fe-input-error {
+    margin: -20px 0 0 2px;
+    font-size: 0.8em;
+}
+
+.fe-stars {
+    display: inline-flex;
+    gap: 0.25rem;
+    cursor: pointer;
+}
+
+.fe-stars button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #d1d5db;
+    line-height: 1;
+}
+
+.fe-stars button[data-active='true'] {
+    color: #f59e0b;
+}
+
+.fe-file-drop {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.fe-file-drop[data-dragging='true'] {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.fe-avatar-preview {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 9999px;
+    object-fit: cover;
+}
+
+.fe-dynamic-group-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.fe-dynamic-group-row > *:first-child {
+    flex: 1 1 auto;
+}
+
+/* SwitchComponent: en Vue estos estilos iban en su <style scoped>. */
+
+.uk-switch {
+    position: relative;
+    display: inline-block;
+    height: 19px;
+    width: 30px;
+}
+
+.uk-switch input {
+    display: none;
+}
+
+.uk-switch-slider {
+    background-color: rgba(0, 0, 0, 0.22);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-radius: 500px;
+    bottom: 0;
+    cursor: pointer;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.07);
+}
+
+.uk-switch-slider:before {
+    content: '';
+    background-color: #fff;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    transition-property: transform, box-shadow;
+    transition-duration: 0.2s;
+}
+
+.uk-switch input:checked + .uk-switch-slider {
+    background-color: #39f !important;
+}
+
+.uk-switch input:checked + .uk-switch-slider:before {
+    transform: translateX(13px);
+}
+
+.uk-switch-slider.uk-switch-big:before {
+    transform: scale(1.2);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.22);
+}
+
+.uk-switch input:checked + .uk-switch-slider.uk-switch-big:before {
+    transform: translateX(13px) scale(1.2);
+}
+
+/* CodeInputComponent */
+
+.fe-code-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.fe-code-input input::-webkit-outer-spin-button,
+.fe-code-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.fe-code-input input {
+    -moz-appearance: textfield;
+}
