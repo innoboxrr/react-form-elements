@@ -43,7 +43,7 @@ export default function PolymorphicInputComponent({
     const saveButton = onSave && dirty ? (
         <button
             type="button"
-            className="uk-button uk-button-primary uk-button-small"
+            className="fe-button fe-button-sm"
             onClick={() => {
                 setDirty(false)
                 onSave(current)
@@ -93,7 +93,7 @@ export default function PolymorphicInputComponent({
             case 'radio':
                 return (
                     <div>
-                        {settings.label ? <div className="uk-margin"><label>{settings.label}</label></div> : null}
+                        {settings.label ? <div className="fe-mb"><label>{settings.label}</label></div> : null}
                         {(settings.options ?? []).map((option) => (
                             <RadioInputComponent
                                 key={option}
@@ -111,7 +111,7 @@ export default function PolymorphicInputComponent({
             case 'checkbox':
                 return (
                     <div>
-                        {settings.label ? <div className="uk-margin"><label>{settings.label}</label></div> : null}
+                        {settings.label ? <div className="fe-mb"><label>{settings.label}</label></div> : null}
                         {(settings.options ?? []).map((option) => (
                             <CheckboxInputComponent
                                 key={option}
@@ -172,9 +172,9 @@ export default function PolymorphicInputComponent({
 
     return (
         <div>
-            <div className="uk-grid-small" uk-grid="">
-                <div className="uk-width-expand">{control()}</div>
-                {saveButton ? <div className="uk-width-auto">{saveButton}</div> : null}
+            <div className="fe-grid-sm" fe-grid="">
+                <div className="fe-w-expand">{control()}</div>
+                {saveButton ? <div className="fe-w-auto">{saveButton}</div> : null}
             </div>
         </div>
     )

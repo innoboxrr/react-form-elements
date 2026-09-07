@@ -154,7 +154,7 @@ export default function FileInputComponent({
                     }} />
             </div>
 
-            <ul className="uk-list">
+            <ul className="fe-list">
                 {files.map((entry, index) => (
                     <li key={`${entry.name}-${index}`}>
                         <img src={entry.preview} alt={entry.name} width="48" />
@@ -167,7 +167,7 @@ export default function FileInputComponent({
             </ul>
 
             {errors.length ? (
-                <ul className="uk-list text-red-600">
+                <ul className="fe-list text-red-600">
                     {errors.map((entry, index) => (
                         <li key={`${entry.name}-error-${index}`}>{entry.name}: {entry.errors?.join(', ')}</li>
                     ))}
@@ -177,7 +177,7 @@ export default function FileInputComponent({
             {overTotal ? <p className="text-red-600">El tamaño total supera el máximo permitido.</p> : null}
 
             {! autoUpload && files.length ? (
-                <button type="button" className="uk-button" disabled={uploading || overTotal} onClick={upload}>
+                <button type="button" className="fe-button" disabled={uploading || overTotal} onClick={upload}>
                     {uploading ? 'Subiendo…' : 'Subir'}
                 </button>
             ) : null}

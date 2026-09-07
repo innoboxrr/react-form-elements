@@ -30,7 +30,7 @@ export default function ButtonComponent({
     const className = useThemeClass(TOKENS[variant] ?? 'button', customClass)
 
     return (
-        <div className="uk-margin">
+        <div className="fe-mb">
             <button
                 type={type}
                 className={className}

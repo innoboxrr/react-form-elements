@@ -37,20 +37,20 @@ export default function ColorPickerInputComponent({
 
     return (
         <Field label={label} help={help} htmlFor={uid} inline={false}>
-            <div className="uk-flex" style={{ gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+            <div className="fe-flex" style={{ gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
                 <HexColorPicker color={current || '#607C8A'} onChange={set} />
 
                 <div>
                     <HexColorInput
                         id={uid}
-                        className="uk-input"
+                        className="fe-input"
                         color={current || ''}
                         prefixed
                         onChange={set} />
 
                     <input type="hidden" name={name} data-validators={validators ?? undefined} value={current ?? ''} readOnly />
 
-                    <div className="uk-flex uk-margin-small-top" style={{ gap: '0.25rem', flexWrap: 'wrap', maxWidth: '12rem' }}>
+                    <div className="fe-flex fe-mt-sm" style={{ gap: '0.25rem', flexWrap: 'wrap', maxWidth: '12rem' }}>
                         {colors.map((color) => (
                             <button
                                 key={color}
@@ -73,7 +73,7 @@ export default function ColorPickerInputComponent({
                     {clearable ? (
                         <button
                             type="button"
-                            className="uk-button uk-button-link uk-margin-small-top"
+                            className="fe-button fe-button-link fe-mt-sm"
                             onClick={() => set('')}>
                             Limpiar
                         </button>

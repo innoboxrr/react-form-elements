@@ -26,7 +26,7 @@ export default function CheckboxInputComponent({
     const checked = isGroup ? current.includes(val) : Boolean(current)
 
     return (
-        <div className="uk-margin">
+        <div className="fe-mb">
             <label className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
                 <input
                     className={boxClass}

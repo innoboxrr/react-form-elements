@@ -19,7 +19,7 @@ export default function RadioInputComponent({
     const radioClass = useThemeClass('radio', customClass)
 
     return (
-        <div className="uk-margin">
+        <div className="fe-mb">
             <label className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
                 <input
                     className={radioClass}

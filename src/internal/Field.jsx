@@ -3,7 +3,7 @@ import { getTheme, onThemeChange } from 'innoboxrr-form-core'
 import FieldLabel from './FieldLabel.jsx'
 
 /**
- * El envoltorio `uk-margin > uk-inline` que llevan casi todos los controles.
+ * El envoltorio `fe-mb > fe-inline` que llevan casi todos los controles.
  */
 export default function Field({ label, help, htmlFor, children, inline = true }) {
     const theme = useSyncExternalStore(onThemeChange, () => getTheme(), () => getTheme())

@@ -62,7 +62,7 @@ export default function TextInputComponent({
 
     return (
         <Field label={label} help={help} htmlFor={uid}>
-            {hasIcon ? <span className="uk-form-icon" uk-icon={`icon: ${icon}`}></span> : null}
+            {hasIcon ? <span className="fe-field-icon" uk-icon={`icon: ${icon}`}></span> : null}
 
             <div className="fe-input-wrap">
                 <input

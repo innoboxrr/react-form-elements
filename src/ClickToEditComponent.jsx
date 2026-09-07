@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
  * Gemelo de ClickToEditComponent.vue: texto que se convierte en input al
  * hacer clic. `onInput` recibe el valor confirmado.
  */
-export default function ClickToEditComponent({ value = '', onInput, customClass = 'uk-input' }) {
+export default function ClickToEditComponent({ value = '', onInput, customClass = 'fe-input' }) {
     const [editing, setEditing] = useState(false)
     const [draft, setDraft] = useState(value)
     const input = useRef(null)

@@ -207,7 +207,7 @@ export default function DynamicGroupInputComponent({
 
             <button
                 type="button"
-                className="uk-button uk-button-primary uk-margin-top"
+                className="fe-button fe-mt"
                 onClick={() => set([...keyed, emptyGroup()])}>
                 {addButtonLabel}
             </button>

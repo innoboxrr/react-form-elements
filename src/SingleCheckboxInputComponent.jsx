@@ -15,11 +15,11 @@ export default function SingleCheckboxInputComponent({
     const htmlId = `${id}_${label}`
 
     return (
-        <div className="uk-margin">
+        <div className="fe-mb">
             <label htmlFor={htmlId} className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
                 <input
                     id={htmlId}
-                    className="uk-checkbox"
+                    className="fe-checkbox"
                     type="checkbox"
                     name={`input_${id}`}
                     checked={checked}

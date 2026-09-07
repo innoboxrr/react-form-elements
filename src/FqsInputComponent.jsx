@@ -19,7 +19,7 @@ const DEFAULT_LABELS = {
 export default function FqsInputComponent({
     value,
     onChange,
-    inputClass = 'uk-input uk-form-large uk-border-rounded',
+    inputClass = 'fe-input  ',
     labels = DEFAULT_LABELS,
     name = 'fqs',
 }) {
@@ -37,7 +37,7 @@ export default function FqsInputComponent({
             <h4>{text.title}</h4>
 
             {items.map((item, index) => (
-                <div key={index} className="uk-card uk-card-default uk-card-small uk-card-body uk-margin">
+                <div key={index} className="fe-card fe-card-sm fe-card-body fe-mb">
                     <TextInputComponent
                         type="text"
                         name={`${name}[${index}][question]`}
@@ -54,7 +54,7 @@ export default function FqsInputComponent({
 
                     <button
                         type="button"
-                        className="uk-button uk-button-danger uk-button-small"
+                        className="fe-button fe-button-danger fe-button-sm"
                         onClick={() => set(items.filter((_, position) => position !== index))}>
                         {text.remove}
                     </button>
@@ -63,7 +63,7 @@ export default function FqsInputComponent({
 
             <button
                 type="button"
-                className="uk-button uk-button-primary"
+                className="fe-button"
                 onClick={() => set([...items, { question: '', answer: '' }])}>
                 {text.add}
             </button>

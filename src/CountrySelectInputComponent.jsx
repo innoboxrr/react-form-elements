@@ -20,8 +20,8 @@ import Field from './internal/Field.jsx'
  *     import 'react-phone-number-input/style.css'
  */
 export default function CountrySelectInputComponent({
-    wrapperClass = 'uk-margin',
-    containerClass = 'uk-inline uk-width-1-1',
+    wrapperClass = 'fe-mb',
+    containerClass = 'fe-inline fe-w-full',
     labelClass = 'ml-2 text-sm font-medium text-gray-900 dark:text-white',
     label = '',
     help = null,
