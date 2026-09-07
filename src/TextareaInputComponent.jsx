@@ -6,6 +6,7 @@ import useControlled from './internal/useControlled.js'
  * Gemelo de TextareaInputComponent.vue.
  */
 export default function TextareaInputComponent({
+    id: providedId = undefined,
     label = '',
     help = null,
     customClass = null,
@@ -21,7 +22,8 @@ export default function TextareaInputComponent({
     onChange,
     ...rest
 }) {
-    const uid = useId()
+    const generatedId = useId()
+    const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, '')
 
     const minimum = minLength ?? min_length

@@ -7,6 +7,7 @@ import useControlled from './internal/useControlled.js'
  * el slot por defecto en Vue.
  */
 export default function SelectInputComponent({
+    id: providedId = undefined,
     label = '',
     help = null,
     customClass = 'uk-select uk-form-large uk-border-rounded',
@@ -19,7 +20,8 @@ export default function SelectInputComponent({
     children,
     ...rest
 }) {
-    const uid = useId()
+    const generatedId = useId()
+    const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, multiple ? [] : '')
 
     return (

@@ -18,6 +18,8 @@ Los estilos van una vez por aplicación:
 
 ```js
 import 'innoboxrr-react-form-elements/src/css/form-elements.css'
+import '@yaireo/tagify/dist/tagify.css'          // si usas TagsInputComponent
+import 'react-phone-number-input/style.css'      // si usas CountrySelectInputComponent
 ```
 
 ## Uso
@@ -47,7 +49,8 @@ import { TextInputComponent, SelectInputComponent } from 'innoboxrr-react-form-e
 | `:custom-class` | `customClass` |
 | `min_length` / `max_length` | `minLength` / `maxLength` (se aceptan también los de guion bajo) |
 | slot por defecto de `SelectInputComponent` | `children` |
-| `@change` de `CountrySelectInputComponent` | `onCountryChange({ phone, country, isValid })` |
+| `v-format` | prop `maskFormat` |
+| `@change` de `CountrySelectInputComponent` | `onCountryChange({ phone, country, callingCode, national, isValid })` |
 | `@submit` / `@selected` de `ModelSearchInputComponent` | `onSubmit` / `onSelected` |
 | `install(app)` | no existe: React no tiene plugin de aplicación |
 
@@ -59,35 +62,61 @@ Todos los controles funcionan también **sin** `value`: se gobiernan solos. Eso
 permite montarlos en una prueba o en un formulario no controlado sin escribir
 estado alrededor.
 
-## Dependencias opcionales
+## Las librerías de debajo
 
-Tres componentes envuelven librerías pesadas y funcionan sin ellas:
+Cada componente envuelve el equivalente React de la librería que envuelve su
+gemelo Vue. Donde la librería es agnóstica, es literalmente la misma:
 
-| Componente | Con la librería | Sin ella |
+| Componente | Vue | React |
 |---|---|---|
-| `EditorInputComponent` | `@tinymce/tinymce-react` | `<textarea>` |
-| `CodeMirrorComponent` | `@codemirror/*` | `<textarea>` monoespaciado |
-| `TextEditorMonoStyleInputComponent` | `@codemirror/*` | igual |
+| `TextInputComponent` (máscara) | `innoboxrr-maskjs/vue` | `innoboxrr-maskjs` — **el mismo motor** |
+| `TagsInputComponent` | `@yaireo/tagify` | `@yaireo/tagify/react` — **la misma librería** |
+| `EditorInputComponent` | `@tinymce/tinymce-vue` | `@tinymce/tinymce-react` — el envoltorio oficial hermano |
+| `CodeMirrorComponent` | `vue-codemirror` | `@uiw/react-codemirror` — el mismo CodeMirror 6 |
+| `SelectSearchInputComponent` | `vue-select` | `react-select` |
+| `CountrySelectInputComponent` | `vue-tel-input` | `react-phone-number-input` — el mismo `libphonenumber-js` |
+| `DynamicGroupInputComponent` | `vuedraggable` | `@dnd-kit/sortable` |
+| `ColorPickerInputComponent` | `lightvue` (opcional) | `react-colorful` |
 
-Se cargan con `import()` diferido al runtime: con un literal, Vite las resuelve
-en tiempo de build y aborta si no están, que es justo lo contrario de
-"opcional".
+Tres notas sobre esas elecciones:
+
+- **`@dnd-kit`** es el sucesor de `react-beautiful-dnd`, que está archivado. A
+  diferencia de SortableJS trae **reordenación por teclado**, así que el asa de
+  arrastre es un `<button>` alcanzable con tabulador. Un formulario que solo se
+  reordena con el ratón no es accesible.
+- **`react-phone-number-input`** valida con `libphonenumber-js`, igual que
+  `vue-tel-input`. Sabe cuántos dígitos tiene un número de cada país.
+- **`react-colorful`** pesa 2,8 kB y no tiene dependencias. La versión Vue cae
+  a `<input type="color">` cuando `lightvue` no está, que abre el diálogo del
+  sistema operativo y no se puede estilar ni probar.
+
+## Máscaras
+
+```jsx
+<TextInputComponent
+    type="text"
+    name="phone"
+    label="Teléfono"
+    maskFormat={{ mask: '(___) ___-____', format: '(***) ***-****' }}
+    value={phone}
+    onChange={setPhone} />
+```
+
+En `format`: `*` es un dígito, `a` una letra, `A` letra o dígito. Todo lo demás
+es un literal. Ver [`innoboxrr-maskjs`](../maskjs).
 
 ## Diferencias deliberadas
 
-- **`SelectSearchInputComponent`** no usa `react-select`. El contrato público
-  (`options`, `label`, `reduce`, el valor, `onSearch`) es el mismo, y así el
-  paquete no arrastra una dependencia de 30 KB para buscar y elegir.
-- **`TagsInputComponent`** no usa Tagify, que manipula el DOM por su cuenta. El
-  valor de salida —un array de cadenas— es idéntico.
-- **`CountrySelectInputComponent`** no usa `vue-tel-input` (es de Vue): la
-  lista de prefijos viaja en `src/js/countries.js` y las banderas se calculan
-  del ISO como emoji, sin empaquetar imágenes.
-- **`DynamicGroupInputComponent`** reordena con la API nativa de arrastre en
-  vez de `vuedraggable`.
 - **`MultiCheckboxInputComponent`** deriva la selección del valor. La versión
   Vue la recalculaba con `document.querySelectorAll`, así que dos grupos con el
   mismo `id` se pisaban.
+- **`SelectSearchInputComponent`, `ColorPickerInputComponent`,
+  `CodeMirrorComponent` y `EditorInputComponent`** publican su valor en un
+  `<input type="hidden">` con el `name` y el `data-validators`. Sus librerías
+  no exponen un input donde ponerlos, y el validador del proyecto los lee del
+  DOM.
+- **Todos aceptan `id`.** Sin eso, pasar un `id` cambiaba el del control pero
+  no el `for` de la etiqueta, y la etiqueta quedaba apuntando a la nada.
 
 ## Pruebas
 

@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { applyMask, isMaskSpec } from 'innoboxrr-maskjs'
 import Field from './internal/Field.jsx'
 import useControlled from './internal/useControlled.js'
 
@@ -10,6 +11,7 @@ import useControlled from './internal/useControlled.js'
  * y los que emite el generador de Vue.
  */
 export default function TextInputComponent({
+    id: providedId = undefined,
     label = '',
     help = null,
     icon = '',
@@ -26,6 +28,7 @@ export default function TextInputComponent({
     max_length = null,
     steps = null,
     readOnly = undefined,
+    maskFormat = null,
     value,
     onChange,
     onEnter,
@@ -35,7 +38,8 @@ export default function TextInputComponent({
     onPaste,
     ...rest
 }) {
-    const uid = useId()
+    const generatedId = useId()
+    const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, '')
     const [showPassword, setShowPassword] = useState(false)
 
@@ -46,6 +50,13 @@ export default function TextInputComponent({
     const maximum = maxLength ?? max_length
 
     const hasIcon = icon !== '' && icon != null
+
+    // El equivalente de la directiva v-format de Vue. Un input controlado no
+    // necesita el hook de maskjs: basta con formatear el valor de entrada,
+    // porque applyMask es pura e idempotente.
+    const masked = isMaskSpec(maskFormat)
+
+    const shown = masked ? applyMask(current, maskFormat).value : (current ?? '')
 
     return (
         <Field label={label} help={help} htmlFor={uid}>
@@ -62,20 +73,22 @@ export default function TextInputComponent({
                     autoFocus={autoFocus ?? undefined}
                     autoComplete={autoComplete ?? undefined}
                     data-validators={validators ?? undefined}
+                    data-mask={masked ? maskFormat.mask : undefined}
+                    data-format={masked ? maskFormat.format : undefined}
                     data-min_length={minimum ?? undefined}
                     data-max_length={maximum ?? undefined}
                     min={minimum ?? undefined}
                     max={maximum ?? undefined}
                     step={steps ?? undefined}
                     readOnly={readOnly ?? undefined}
-                    value={current ?? ''}
+                    value={shown}
                     onKeyUp={(event) => {
                         if (event.key === 'Enter' && onEnter) {
                             onEnter(event)
                         }
                     }}
                     onChange={(event) => {
-                        set(event.target.value)
+                        set(masked ? applyMask(event.target.value, maskFormat).value : event.target.value)
 
                         if (onInput) {
                             onInput(event)

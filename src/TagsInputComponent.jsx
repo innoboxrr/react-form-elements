@@ -1,86 +1,86 @@
-import { useId, useState } from 'react'
+import { useCallback, useId, useMemo, useRef } from 'react'
+import Tags from '@yaireo/tagify/react'
 import Field from './internal/Field.jsx'
 import useControlled from './internal/useControlled.js'
 
 /**
  * Gemelo de TagsInputComponent.vue.
  *
- * La versión Vue envuelve Tagify, que manipula el DOM por su cuenta y no tiene
- * binding oficial para React. Como el contrato es sólo "un array de cadenas",
- * aquí las etiquetas se manejan directamente: menos dependencia y el mismo
- * valor de salida. Acepta también una cadena separada por comas, como Vue.
+ * Es literalmente la misma librería que usa la versión Vue —Tagify—, con su
+ * envoltorio oficial de React. Eso mantiene el mismo comportamiento, el mismo
+ * marcado y la misma hoja de estilos (`@yaireo/tagify/dist/tagify.css`), que
+ * es lo que importa para que un formulario generado se vea igual en los dos
+ * frameworks.
+ *
+ * El valor sigue siendo un array de cadenas, como en Vue. Acepta también una
+ * cadena separada por comas.
  */
 export default function TagsInputComponent({
+    id: providedId = undefined,
     label = '',
     help = null,
     customClass = 'uk-input uk-form-large uk-border-rounded',
     name,
     placeholder = '',
     validators = null,
+    whitelist = undefined,
+    maxTags = undefined,
+    duplicates = false,
     value,
     onChange,
+    tagifyRef,
 }) {
-    const uid = useId()
+    const generatedId = useId()
+    const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, [])
-    const [draft, setDraft] = useState('')
+    const latest = useRef(null)
 
-    const tags = Array.isArray(current)
-        ? current
-        : String(current ?? '').split(',').map((tag) => tag.trim()).filter(Boolean)
+    latest.current = set
 
-    const add = (tag) => {
-        const clean = tag.trim()
+    const tags = useMemo(() => (
+        Array.isArray(current)
+            ? current
+            : String(current ?? '').split(',').map((tag) => tag.trim()).filter(Boolean)
+    ), [current])
 
-        if (! clean || tags.includes(clean)) {
-            return
+    const settings = useMemo(() => {
+        const options = {
+            placeholder,
+            duplicates,
+            // Tagify emite objetos {value}; el contrato guarda cadenas.
+            originalInputValueFormat: (values) => values.map((tag) => tag.value).join(','),
         }
 
-        set([...tags, clean])
-    }
+        // Tagify no distingue "no lo pases" de "pasalo como undefined": con
+        // whitelist a undefined revienta al filtrar sugerencias.
+        if (whitelist !== undefined) {
+            options.whitelist = whitelist
+        }
+
+        if (maxTags !== undefined) {
+            options.maxTags = maxTags
+        }
+
+        return options
+    }, [placeholder, whitelist, maxTags, duplicates])
+
+    const onTagifyChange = useCallback((event) => {
+        const raw = event.detail?.value ?? ''
+
+        latest.current(raw ? raw.split(',').map((tag) => tag.trim()).filter(Boolean) : [])
+    }, [])
 
     return (
         <Field label={label} help={help} htmlFor={uid}>
-            <div className="uk-flex uk-flex-wrap" style={{ gap: '0.25rem', marginBottom: '0.25rem' }}>
-                {tags.map((tag) => (
-                    <span key={tag} className="uk-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                        {tag}
-                        <button
-                            type="button"
-                            aria-label={`Quitar ${tag}`}
-                            onClick={() => set(tags.filter((item) => item !== tag))}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', padding: 0 }}>
-                            &times;
-                        </button>
-                    </span>
-                ))}
-            </div>
-
-            <input
+            <Tags
                 id={uid}
-                className={customClass}
-                type="text"
                 name={name}
-                placeholder={placeholder}
+                className={customClass}
                 data-validators={validators ?? undefined}
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                onBlur={() => {
-                    add(draft)
-                    setDraft('')
-                }}
-                onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ',') {
-                        event.preventDefault()
-                        add(draft)
-                        setDraft('')
-
-                        return
-                    }
-
-                    if (event.key === 'Backspace' && draft === '' && tags.length) {
-                        set(tags.slice(0, -1))
-                    }
-                }} />
+                settings={settings}
+                value={tags}
+                tagifyRef={tagifyRef}
+                onChange={onTagifyChange} />
         </Field>
     )
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 
@@ -248,15 +248,63 @@ describe('StarsInputComponent', () => {
 })
 
 describe('TagsInputComponent', () => {
-    it('añade una etiqueta con Enter y no la repite', async () => {
-        render(<Controlled component={TagsInputComponent} initial={[]} name="tags" label="Tags" />)
+    /**
+     * Se conduce la instancia real de Tagify —la misma libreria que usa el
+     * gemelo Vue— en vez de simular pulsaciones sobre su contenteditable, que
+     * en jsdom no tiene cursor y produce resultados que no dicen nada.
+     */
+    it('entrega un array de cadenas cuando Tagify avisa del cambio', async () => {
+        const onChange = vi.fn()
+        const tagify = { current: null }
 
-        const input = screen.getByLabelText('Tags')
+        render(<TagsInputComponent name="tags" label="Tags" value={[]} onChange={onChange} tagifyRef={tagify} />)
 
-        await userEvent.type(input, 'laravel{Enter}')
-        await userEvent.type(input, 'laravel{Enter}')
+        await waitFor(() => expect(tagify.current).not.toBeNull())
 
-        expect(screen.getAllByText('laravel')).toHaveLength(1)
+        act(() => tagify.current.trigger('change', 'laravel,vue'))
+
+        expect(onChange).toHaveBeenLastCalledWith(['laravel', 'vue'])
+    })
+
+    it('un valor vacio es un array vacio y no [""]', async () => {
+        const onChange = vi.fn()
+        const tagify = { current: null }
+
+        render(<TagsInputComponent name="tags" label="Tags" value={['x']} onChange={onChange} tagifyRef={tagify} />)
+
+        await waitFor(() => expect(tagify.current).not.toBeNull())
+
+        act(() => tagify.current.trigger('change', ''))
+
+        expect(onChange).toHaveBeenLastCalledWith([])
+    })
+
+    /**
+     * El contrato guarda cadenas, no los objetos {value} de Tagify. La
+     * traduccion en la otra direccion la hace originalInputValueFormat.
+     */
+    it('escribe una cadena separada por comas en el input original', async () => {
+        const tagify = { current: null }
+
+        render(<TagsInputComponent name="tags" label="Tags" value={[]} tagifyRef={tagify} />)
+
+        await waitFor(() => expect(tagify.current).not.toBeNull())
+
+        act(() => tagify.current.addTags(['laravel', 'vue']))
+
+        expect(tagify.current.DOM.originalInput.value).toBe('laravel,vue')
+    })
+
+    it('no admite duplicados', async () => {
+        const tagify = { current: null }
+
+        render(<TagsInputComponent name="tags" label="Tags" value={['laravel']} tagifyRef={tagify} />)
+
+        await waitFor(() => expect(tagify.current).not.toBeNull())
+
+        act(() => tagify.current.addTags(['laravel']))
+
+        expect(tagify.current.value.map((tag) => tag.value)).toEqual(['laravel'])
     })
 
     it('acepta una cadena separada por comas, como la version Vue', () => {

@@ -1,153 +1,102 @@
-import { useId, useMemo, useState } from 'react'
+import { useCallback, useId, useMemo } from 'react'
+import Select from 'react-select'
 import Field from './internal/Field.jsx'
 import useControlled from './internal/useControlled.js'
-
-const optionLabel = (option, label) => {
-    if (option === null || option === undefined) {
-        return ''
-    }
-
-    return typeof option === 'object' ? String(option[label] ?? '') : String(option)
-}
 
 /**
  * Gemelo de SelectSearchInputComponent.vue.
  *
- * La versión Vue envuelve vue-select. Su equivalente en React sería
- * react-select, pero eso sería atar el paquete a una dependencia de 30 KB para
- * lo que aquí se necesita: buscar y elegir. El contrato público —`options`,
- * `label`, `reduce`, el valor y el aviso de búsqueda— es el mismo, así que el
- * código generado no nota la diferencia.
+ * La versión Vue envuelve vue-select; aquí va react-select, que es su
+ * equivalente en React: la misma búsqueda, el mismo multiselección, el mismo
+ * `appendToBody` (aquí `menuPortalTarget`) y accesibilidad de teclado de
+ * serie.
+ *
+ * El contrato público es el del gemelo Vue: `options`, `label` como nombre de
+ * la propiedad que se muestra, `reduce` para quedarse con el valor, y
+ * `value` + `onChange(valor)`.
  */
 export default function SelectSearchInputComponent({
+    id: providedId = undefined,
     inputLabel = '',
     help = null,
-    customClass = 'uk-input uk-form-large uk-border-rounded',
+    customClass = null,
     name,
     options = [],
     label = 'label',
     placeholder = '',
     clearable = true,
     disabled = false,
+    multiple = false,
+    appendToBody = false,
+    loading = false,
     reduce = (option) => option,
     validators = null,
     value,
     onChange,
     onSearch,
+    ...rest
 }) {
-    const uid = useId()
-    const [current, set] = useControlled(value, onChange, null)
-    const [query, setQuery] = useState('')
-    const [open, setOpen] = useState(false)
+    const generatedId = useId()
+    const uid = providedId ?? generatedId
+    const [current, set] = useControlled(value, onChange, multiple ? [] : null)
 
-    const filtered = useMemo(() => {
-        const needle = query.trim().toLowerCase()
-
-        if (! needle) {
-            return options
-        }
-
-        return options.filter((option) => optionLabel(option, label).toLowerCase().includes(needle))
-    }, [options, query, label])
-
-    const selected = useMemo(
-        () => options.find((option) => reduce(option) === current) ?? null,
-        [options, current, reduce]
+    const getOptionLabel = useCallback(
+        (option) => (typeof option === 'object' && option !== null ? String(option[label] ?? '') : String(option)),
+        [label]
     )
 
-    const display = open ? query : optionLabel(selected, label)
+    // react-select trabaja con la opcion entera; el contrato guarda solo lo
+    // que devuelve reduce. Esta es la traduccion entre los dos, y es la razon
+    // de que quien consume el componente no note el cambio de libreria.
+    const selected = useMemo(() => {
+        if (multiple) {
+            const wanted = Array.isArray(current) ? current : []
+
+            return options.filter((option) => wanted.includes(reduce(option)))
+        }
+
+        return options.find((option) => reduce(option) === current) ?? null
+    }, [options, current, multiple, reduce])
 
     return (
-        <Field label={inputLabel} help={help} htmlFor={uid}>
-            <div style={{ position: 'relative' }}>
-                <input
-                    id={uid}
-                    className={customClass}
-                    type="text"
-                    role="combobox"
-                    aria-expanded={open}
-                    aria-controls={`${uid}-listbox`}
-                    autoComplete="off"
-                    name={name}
-                    placeholder={placeholder}
-                    disabled={disabled}
-                    data-validators={validators ?? undefined}
-                    value={display}
-                    onFocus={() => setOpen(true)}
-                    onBlur={() => window.setTimeout(() => setOpen(false), 120)}
-                    onChange={(event) => {
-                        setQuery(event.target.value)
-                        setOpen(true)
-                        onSearch?.(event.target.value)
-                    }} />
+        <Field label={inputLabel} help={help} htmlFor={uid} inline={false}>
+            <Select
+                inputId={uid}
+                className={customClass ?? undefined}
+                classNamePrefix="fe-select"
+                options={options}
+                getOptionLabel={getOptionLabel}
+                getOptionValue={(option) => String(reduce(option))}
+                placeholder={placeholder}
+                isClearable={clearable}
+                isDisabled={disabled}
+                isMulti={multiple}
+                isLoading={loading}
+                aria-label={inputLabel || name}
+                // Con `appendToBody` el menu se saca del flujo, que es lo que
+                // resuelve los recortes por overflow y los z-index.
+                menuPortalTarget={appendToBody && typeof document !== 'undefined' ? document.body : undefined}
+                styles={appendToBody ? { menuPortal: (base) => ({ ...base, zIndex: 1015 }) } : undefined}
+                value={selected}
+                onInputChange={(term, meta) => {
+                    if (meta.action === 'input-change') {
+                        onSearch?.(term)
+                    }
 
-                {clearable && selected ? (
-                    <button
-                        type="button"
-                        aria-label="Limpiar"
-                        onClick={() => {
-                            set(null)
-                            setQuery('')
-                        }}
-                        style={{
-                            position: 'absolute',
-                            right: '0.5rem',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                        }}>
-                        &times;
-                    </button>
-                ) : null}
+                    return term
+                }}
+                onChange={(option) => {
+                    set(multiple
+                        ? (option ?? []).map((item) => reduce(item))
+                        : (option ? reduce(option) : null))
+                }}
+                {...rest} />
 
-                {open ? (
-                    <ul
-                        id={`${uid}-listbox`}
-                        role="listbox"
-                        className="uk-list uk-background-default"
-                        style={{
-                            position: 'absolute',
-                            zIndex: 1015,
-                            width: '100%',
-                            maxHeight: '15rem',
-                            overflowY: 'auto',
-                            margin: 0,
-                            border: '1px solid #e5e7eb',
-                        }}>
-                        {filtered.length === 0 ? (
-                            <li style={{ padding: '0.5rem' }}>Sin resultados</li>
-                        ) : filtered.map((option, index) => {
-                            const text = optionLabel(option, label)
-
-                            return (
-                                <li key={`${text}-${index}`} role="option" aria-selected={reduce(option) === current}>
-                                    <button
-                                        type="button"
-                                        style={{
-                                            display: 'block',
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.5rem',
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                        }}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                        onClick={() => {
-                                            set(reduce(option))
-                                            setQuery('')
-                                            setOpen(false)
-                                        }}>
-                                        {text}
-                                    </button>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                ) : null}
-            </div>
+            {/* El validador del proyecto lee data-validators del DOM, y
+                react-select no expone un input donde ponerlo. */}
+            <input type="hidden" name={name} data-validators={validators ?? undefined} value={
+                multiple ? (Array.isArray(current) ? current.join(',') : '') : (current ?? '')
+            } readOnly />
         </Field>
     )
 }
