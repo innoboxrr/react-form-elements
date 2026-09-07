@@ -1,5 +1,5 @@
 import SelectSearchInputComponent from './SelectSearchInputComponent.jsx'
-import timezones from './js/timezone.js'
+import { timezones } from 'innoboxrr-form-core'
 
 /**
  * Gemelo de TimezoneSelectInputComponent.vue: el buscador con la lista de

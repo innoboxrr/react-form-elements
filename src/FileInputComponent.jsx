@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { isImage, sizeParser, validateFiles } from './js/files.js'
+import { describeFiles, sizeParser } from 'innoboxrr-form-core'
 
 const DEFAULT_MIMES = [
     'text/plain',
@@ -55,10 +55,10 @@ export default function FileInputComponent({
             return
         }
 
-        const validated = await validateFiles(incoming, rules)
+        const described = describeFiles(incoming, rules)
 
-        setFiles((current) => [...current, ...validated.filter((file) => file.validation === true)])
-        setErrors((current) => [...current, ...validated.filter((file) => file.validation === false)])
+        setFiles((current) => [...current, ...described.filter((entry) => entry.validation)])
+        setErrors((current) => [...current, ...described.filter((entry) => ! entry.validation)])
     }, [rules, uploading])
 
     const upload = async () => {
@@ -67,9 +67,9 @@ export default function FileInputComponent({
 
         const uploaded = []
 
-        for (const file of files) {
-            if (file.uploaded || ! file.validation) {
-                uploaded.push(file)
+        for (const entry of files) {
+            if (entry.uploaded || ! entry.validation) {
+                uploaded.push(entry)
 
                 continue
             }
@@ -77,7 +77,8 @@ export default function FileInputComponent({
             const body = new FormData()
 
             body.append('_token', csrfToken())
-            body.append('file', file)
+            // El File de verdad, no el descriptor.
+            body.append('file', entry.file)
             body.append('visibility', visibility)
 
             try {
@@ -92,16 +93,11 @@ export default function FileInputComponent({
                 // El original mutaba el File en sitio. Aqui se copian los
                 // datos de la respuesta en una entrada nueva: mutar un File
                 // que React tiene en estado no dispara ningun re-render.
-                uploaded.push(Object.assign(file, {
-                    uploaded: true,
-                    path: data.path,
-                    id: data.id,
-                    response: data,
-                }))
+                uploaded.push({ ...entry, uploaded: true, path: data.path, id: data.id, response: data })
             } catch (error) {
-                uploaded.push(file)
+                uploaded.push(entry)
 
-                setErrors((current) => [...current, { name: file.name, errors: [String(error)] }])
+                setErrors((current) => [...current, { name: entry.name, errors: [String(error)] }])
             }
         }
 
@@ -115,10 +111,10 @@ export default function FileInputComponent({
     const remove = (target) => {
         // El original hacia `files.pop(file)`: pop() ignora sus argumentos y
         // quita el ultimo lote, asi que borrar un archivo eliminaba otro.
-        setFiles((current) => current.filter((file) => file !== target))
+        setFiles((current) => current.filter((entry) => entry !== target))
     }
 
-    const totalSize = files.reduce((sum, file) => sum + file.size, 0)
+    const totalSize = files.reduce((sum, entry) => sum + entry.size, 0)
     const overTotal = totalMaxSize > 0 && totalSize > totalMaxSize
 
     return (
@@ -159,21 +155,21 @@ export default function FileInputComponent({
             </div>
 
             <ul className="uk-list">
-                {files.map((file, index) => (
-                    <li key={`${file.name}-${index}`}>
-                        {isImage(file) ? <img src={file.preview} alt={file.name} width="48" /> : null}
-                        <span>{file.name}</span>
-                        <span> ({sizeParser(file.size)})</span>
-                        {file.uploaded ? <span> ✓</span> : null}
-                        <button type="button" onClick={() => remove(file)}>&times;</button>
+                {files.map((entry, index) => (
+                    <li key={`${entry.name}-${index}`}>
+                        <img src={entry.preview} alt={entry.name} width="48" />
+                        <span>{entry.name}</span>
+                        <span> ({sizeParser(entry.size)})</span>
+                        {entry.uploaded ? <span> ✓</span> : null}
+                        <button type="button" onClick={() => remove(entry)}>&times;</button>
                     </li>
                 ))}
             </ul>
 
             {errors.length ? (
                 <ul className="uk-list text-red-600">
-                    {errors.map((file, index) => (
-                        <li key={`${file.name}-error-${index}`}>{file.name}: {file.errors?.join(', ')}</li>
+                    {errors.map((entry, index) => (
+                        <li key={`${entry.name}-error-${index}`}>{entry.name}: {entry.errors?.join(', ')}</li>
                     ))}
                 </ul>
             ) : null}

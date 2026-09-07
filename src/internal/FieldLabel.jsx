@@ -6,18 +6,21 @@
  * (UIkit + Tailwind) del proyecto anfitrión, así que cambiarlo aquí
  * descuadraría los formularios generados para React respecto a los de Vue.
  */
+import { useSyncExternalStore } from 'react'
+import { getTheme, onThemeChange } from 'innoboxrr-form-core'
+
 export default function FieldLabel({ label, help, htmlFor = undefined }) {
+    const theme = useSyncExternalStore(onThemeChange, () => getTheme(), () => getTheme())
+
     if (! label && ! help) {
         return null
     }
 
     return (
-        <label
-            htmlFor={htmlFor}
-            className=" ml-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label htmlFor={htmlFor} className={theme.label}>
             {help ? (
-                <span className="cursor-pointer">
-                    <i uk-tooltip={`title: ${help}`} className="fa-solid fa-circle-question"></i>
+                <span className={theme.help}>
+                    <i uk-tooltip={`title: ${help}`} className={theme.helpIcon}></i>
                 </span>
             ) : null}
             {label}

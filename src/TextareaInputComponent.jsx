@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import Field from './internal/Field.jsx'
+import useThemeClass from './internal/useThemeClass.js'
 import useControlled from './internal/useControlled.js'
 
 /**
@@ -9,7 +10,7 @@ export default function TextareaInputComponent({
     id: providedId = undefined,
     label = '',
     help = null,
-    customClass = null,
+    customClass = undefined,
     rows = 5,
     name,
     placeholder = null,
@@ -25,6 +26,7 @@ export default function TextareaInputComponent({
     const generatedId = useId()
     const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, '')
+    const areaClass = useThemeClass('textarea', customClass)
 
     const minimum = minLength ?? min_length
     const maximum = maxLength ?? max_length
@@ -33,7 +35,7 @@ export default function TextareaInputComponent({
         <Field label={label} help={help} htmlFor={uid}>
             <textarea
                 id={uid}
-                className={['uk-textarea uk-form-large uk-border-rounded', customClass].filter(Boolean).join(' ')}
+                className={areaClass}
                 rows={rows}
                 name={name}
                 placeholder={placeholder ?? undefined}

@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import Field from './internal/Field.jsx'
+import useThemeClass from './internal/useThemeClass.js'
 import useControlled from './internal/useControlled.js'
 
 /**
@@ -10,7 +11,7 @@ export default function SelectInputComponent({
     id: providedId = undefined,
     label = '',
     help = null,
-    customClass = 'uk-select uk-form-large uk-border-rounded',
+    customClass = undefined,
     name,
     multiple = false,
     size = null,
@@ -23,12 +24,13 @@ export default function SelectInputComponent({
     const generatedId = useId()
     const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, multiple ? [] : '')
+    const selectClass = useThemeClass('select', customClass)
 
     return (
         <Field label={label} help={help} htmlFor={uid}>
             <select
                 id={uid}
-                className={customClass}
+                className={selectClass}
                 name={name}
                 multiple={multiple}
                 data-validators={validators ?? undefined}

@@ -1,3 +1,5 @@
+import useThemeClass from './internal/useThemeClass.js'
+
 /**
  * Gemelo de ButtonComponent.vue.
  *
@@ -5,7 +7,7 @@
  * en que haya que meter un icono dentro.
  */
 export default function ButtonComponent({
-    customClass = 'uk-button uk-width-1-1 button',
+    customClass = undefined,
     disabled = false,
     value,
     type = 'submit',
@@ -13,11 +15,13 @@ export default function ButtonComponent({
     children,
     ...rest
 }) {
+    const className = useThemeClass('button', customClass)
+
     return (
         <div className="uk-margin">
             <button
                 type={type}
-                className={customClass}
+                className={className}
                 disabled={disabled}
                 onClick={onClick}
                 {...rest}>

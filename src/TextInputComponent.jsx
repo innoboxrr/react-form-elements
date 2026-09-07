@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { applyMask, isMaskSpec } from 'innoboxrr-maskjs'
 import Field from './internal/Field.jsx'
+import useThemeClass from './internal/useThemeClass.js'
 import useControlled from './internal/useControlled.js'
 
 /**
@@ -15,7 +16,7 @@ export default function TextInputComponent({
     label = '',
     help = null,
     icon = '',
-    customClass = 'uk-input uk-form-large uk-border-rounded',
+    customClass = undefined,
     type,
     name,
     placeholder = null,
@@ -42,6 +43,7 @@ export default function TextInputComponent({
     const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, '')
     const [showPassword, setShowPassword] = useState(false)
+    const inputClass = useThemeClass('input', customClass)
 
     const isPassword = type === 'password'
     const effectiveType = isPassword ? (showPassword ? 'text' : 'password') : type
@@ -66,7 +68,7 @@ export default function TextInputComponent({
                 <input
                     id={uid}
                     data-uid={uid}
-                    className={[customClass, isPassword ? 'fe-has-toggle' : ''].filter(Boolean).join(' ')}
+                    className={[inputClass, isPassword ? 'fe-has-toggle' : ''].filter(Boolean).join(' ')}
                     type={effectiveType}
                     name={name}
                     placeholder={placeholder ?? undefined}

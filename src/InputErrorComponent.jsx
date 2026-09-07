@@ -4,7 +4,12 @@
  * `errors` es el objeto que devuelve Laravel en un 422 (`{ campo: [...] }`) y
  * `type` la clave que mira este control.
  */
+import { useSyncExternalStore } from 'react'
+import { getTheme, onThemeChange } from 'innoboxrr-form-core'
+
 export default function InputErrorComponent({ errors, type }) {
+    const theme = useSyncExternalStore(onThemeChange, () => getTheme(), () => getTheme())
+
     const messages = errors?.[type]
 
     if (! messages?.length) {
@@ -14,7 +19,7 @@ export default function InputErrorComponent({ errors, type }) {
     return (
         <div>
             {messages.map((error) => (
-                <p key={error} className="fe-input-error text-red-600 font-bold">{error}</p>
+                <p key={error} className={theme.error}>{error}</p>
             ))}
         </div>
     )

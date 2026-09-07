@@ -1,6 +1,7 @@
 import { useCallback, useId, useMemo, useRef } from 'react'
 import Tags from '@yaireo/tagify/react'
 import Field from './internal/Field.jsx'
+import useThemeClass from './internal/useThemeClass.js'
 import useControlled from './internal/useControlled.js'
 
 /**
@@ -19,7 +20,7 @@ export default function TagsInputComponent({
     id: providedId = undefined,
     label = '',
     help = null,
-    customClass = 'uk-input uk-form-large uk-border-rounded',
+    customClass = undefined,
     name,
     placeholder = '',
     validators = null,
@@ -33,6 +34,7 @@ export default function TagsInputComponent({
     const generatedId = useId()
     const uid = providedId ?? generatedId
     const [current, set] = useControlled(value, onChange, [])
+    const inputClass = useThemeClass('input', customClass)
     const latest = useRef(null)
 
     latest.current = set
@@ -75,7 +77,7 @@ export default function TagsInputComponent({
             <Tags
                 id={uid}
                 name={name}
-                className={customClass}
+                className={inputClass}
                 data-validators={validators ?? undefined}
                 settings={settings}
                 value={tags}

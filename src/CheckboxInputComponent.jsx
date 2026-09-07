@@ -1,4 +1,5 @@
 import useControlled from './internal/useControlled.js'
+import useThemeClass from './internal/useThemeClass.js'
 
 /**
  * Gemelo de CheckboxInputComponent.vue.
@@ -8,7 +9,7 @@ import useControlled from './internal/useControlled.js'
  * cosa es un booleano.
  */
 export default function CheckboxInputComponent({
-    customClass = null,
+    customClass = undefined,
     name,
     validators = null,
     text = '',
@@ -19,6 +20,7 @@ export default function CheckboxInputComponent({
     ...rest
 }) {
     const [current, set] = useControlled(value, onChange, '')
+    const boxClass = useThemeClass('checkbox', customClass)
 
     const isGroup = Array.isArray(current)
     const checked = isGroup ? current.includes(val) : Boolean(current)
@@ -27,7 +29,7 @@ export default function CheckboxInputComponent({
         <div className="uk-margin">
             <label className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
                 <input
-                    className={['uk-checkbox', customClass].filter(Boolean).join(' ')}
+                    className={boxClass}
                     type="checkbox"
                     name={name}
                     data-validators={validators ?? undefined}

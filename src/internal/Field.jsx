@@ -1,15 +1,19 @@
+import { useSyncExternalStore } from 'react'
+import { getTheme, onThemeChange } from 'innoboxrr-form-core'
 import FieldLabel from './FieldLabel.jsx'
 
 /**
  * El envoltorio `uk-margin > uk-inline` que llevan casi todos los controles.
  */
 export default function Field({ label, help, htmlFor, children, inline = true }) {
+    const theme = useSyncExternalStore(onThemeChange, () => getTheme(), () => getTheme())
+
     const body = inline
-        ? <div className="uk-inline uk-width-1-1">{children}</div>
+        ? <div className={theme.fieldInner}>{children}</div>
         : children
 
     return (
-        <div className="uk-margin">
+        <div className={theme.field}>
             {(label || help) ? <FieldLabel label={label} help={help} htmlFor={htmlFor} /> : null}
             {body}
         </div>
