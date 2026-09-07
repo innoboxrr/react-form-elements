@@ -116,3 +116,36 @@ describe('tema', () => {
         expect(screen.getByLabelText('A')).toHaveClass('uk-input')
     })
 })
+
+describe('variantes de boton', () => {
+    it('cada variante lee su propio token', () => {
+        setTheme({
+            button: 'primario',
+            buttonSecondary: 'secundario',
+            buttonDanger: 'peligro',
+            buttonLink: 'enlace',
+        })
+
+        render(
+            <>
+                <ButtonComponent value="a" />
+                <ButtonComponent value="b" variant="secondary" />
+                <ButtonComponent value="c" variant="danger" />
+                <ButtonComponent value="d" variant="link" />
+            </>
+        )
+
+        expect(screen.getByRole('button', { name: 'a' })).toHaveClass('primario')
+        expect(screen.getByRole('button', { name: 'b' })).toHaveClass('secundario')
+        expect(screen.getByRole('button', { name: 'c' })).toHaveClass('peligro')
+        expect(screen.getByRole('button', { name: 'd' })).toHaveClass('enlace')
+    })
+
+    it('una variante desconocida cae al boton primario', () => {
+        setTheme({ button: 'primario' })
+
+        render(<ButtonComponent value="x" variant="inventada" />)
+
+        expect(screen.getByRole('button', { name: 'x' })).toHaveClass('primario')
+    })
+})
