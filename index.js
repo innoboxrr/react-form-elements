@@ -22,6 +22,7 @@ export { default as CountrySelectInputComponent } from './src/CountrySelectInput
 export { default as DynamicGroupInputComponent } from './src/DynamicGroupInputComponent.jsx'
 export { default as EditorInputComponent } from './src/EditorInputComponent.jsx'
 export { default as FileDropInputComponent } from './src/FileDropInputComponent.jsx'
+export { default as IconComponent } from './src/IconComponent.jsx'
 export { default as FileInputComponent } from './src/FileInputComponent.jsx'
 export { default as FqsInputComponent } from './src/FqsInputComponent.jsx'
 export { default as InputErrorComponent } from './src/InputErrorComponent.jsx'
