@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react'
+import IconComponent from './IconComponent.jsx'
 import {
     DndContext,
     KeyboardSensor,
@@ -132,7 +133,7 @@ export default function DynamicGroupInputComponent({
                                                     className="cursor-move drag-handle text-slate-400"
                                                     {...attributes}
                                                     {...listeners}>
-                                                    <i className="fa-solid fa-grip-vertical"></i>
+                                                    <IconComponent name="drag" />
                                                 </button>
                                                 <h4 className="text-md font-semibold text-slate-800 dark:text-slate-100">
                                                     {itemLabel} #{index + 1}
@@ -149,7 +150,7 @@ export default function DynamicGroupInputComponent({
                                                         { ...group, __key: `grupo-${nextKey.current++}` },
                                                         ...keyed.slice(index + 1),
                                                     ])}>
-                                                    <i className="fa-solid fa-clone"></i>
+                                                    <IconComponent name="copy" />
                                                 </button>
 
                                                 <button
@@ -157,7 +158,7 @@ export default function DynamicGroupInputComponent({
                                                     aria-label={`${removeButtonLabel} ${index + 1}`}
                                                     className="text-red-800 dark:text-red-400 text-sm"
                                                     onClick={() => set(keyed.filter((_, position) => position !== index))}>
-                                                    <i className="fa-solid fa-trash"></i>
+                                                    <IconComponent name="delete" />
                                                 </button>
 
                                                 <button
@@ -166,7 +167,7 @@ export default function DynamicGroupInputComponent({
                                                     aria-expanded={! group._collapsed}
                                                     className="hover:text-slate-600 dark:hover:text-slate-300 transition"
                                                     onClick={() => updateAt(index, '_collapsed', ! group._collapsed)}>
-                                                    <i className={`fa-solid ${group._collapsed ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+                                                    <IconComponent name={group._collapsed ? 'up' : 'down'} />
                                                 </button>
                                             </div>
                                         </div>

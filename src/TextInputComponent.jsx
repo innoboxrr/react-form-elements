@@ -109,7 +109,7 @@ export default function TextInputComponent({
                         className="fe-password-toggle"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                         onClick={() => setShowPassword((shown) => ! shown)}>
-                        <i className={showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}></i>
+                        <IconComponent name={showPassword ? 'hide' : 'show'} />
                     </button>
                 ) : null}
             </div>
