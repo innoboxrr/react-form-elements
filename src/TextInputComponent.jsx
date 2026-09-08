@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import IconComponent from './IconComponent.jsx'
 import { applyMask, isMaskSpec } from 'innoboxrr-maskjs'
 import Field from './internal/Field.jsx'
 import useThemeClass from './internal/useThemeClass.js'
@@ -62,7 +63,7 @@ export default function TextInputComponent({
 
     return (
         <Field label={label} help={help} htmlFor={uid}>
-            {hasIcon ? <span className="fe-field-icon" uk-icon={`icon: ${icon}`}></span> : null}
+            {hasIcon ? <span className="fe-field-icon"><IconComponent name={icon} /></span> : null}
 
             <div className="fe-input-wrap">
                 <input

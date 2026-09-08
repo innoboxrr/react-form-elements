@@ -20,7 +20,11 @@ export default function FieldLabel({ label, help, htmlFor = undefined }) {
         <label htmlFor={htmlFor} className={theme.label}>
             {help ? (
                 <span className={theme.help}>
-                    <i uk-tooltip={`title: ${help}`} className={theme.helpIcon}></i>
+                    <i
+                        className={theme.helpIcon}
+                        data-tooltip={help}
+                        aria-label={help}
+                        tabIndex={0}></i>
                 </span>
             ) : null}
             {label}
