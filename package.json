@@ -1,6 +1,6 @@
 {
   "name": "innoboxrr-react-form-elements",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "Gemelo React de innoboxrr-form-elements: los mismos componentes, los mismos nombres y el mismo contrato, con diálogos, drawers, menús, avisos y paleta de comandos.",
   "type": "module",
   "main": "index.js",
