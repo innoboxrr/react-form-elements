@@ -194,6 +194,41 @@ describe('CountrySelectInputComponent (react-phone-number-input)', () => {
 
         expect(screen.getByRole('combobox')).toHaveValue('MX')
     })
+
+    /**
+     * Sin la hoja de la librería y sin tema, el selector y el campo salían como
+     * controles nativos sueltos, y la etiqueta con clases de Tailwind.
+     */
+    it('se pinta con el tema y marca el error', async () => {
+        render(<CountrySelectInputComponent label="Teléfono" defaultCountry="MX" onCountryChange={() => {}} />)
+
+        const input = screen.getByLabelText('Teléfono')
+        const phone = input.closest('.PhoneInput')
+
+        expect(phone).toHaveClass('fe-phone')
+        expect(phone).not.toHaveClass('fe-phone-invalid')
+        expect(screen.getByText('Teléfono')).toHaveClass('fe-label')
+
+        await userEvent.type(input, '55')
+
+        expect(phone).toHaveClass('fe-phone-invalid')
+        expect(input).toHaveAttribute('aria-invalid', 'true')
+    })
+
+    /**
+     * El id era el nombre, `telephone` por defecto: con dos teléfonos en la
+     * página, la etiqueta del segundo enfocaba el primero.
+     */
+    it('dos telefonos no comparten id', () => {
+        render(
+            <>
+                <CountrySelectInputComponent label="Teléfono" onCountryChange={() => {}} />
+                <CountrySelectInputComponent label="WhatsApp" onCountryChange={() => {}} />
+            </>
+        )
+
+        expect(screen.getByLabelText('Teléfono').id).not.toBe(screen.getByLabelText('WhatsApp').id)
+    })
 })
 
 describe('DynamicGroupInputComponent (dnd-kit)', () => {

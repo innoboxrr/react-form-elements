@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import PhoneInput, { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input'
-import Field from './internal/Field.jsx'
+import 'react-phone-number-input/style.css'
+import useTheme, { joinClasses } from './internal/useTheme.js'
 
 /**
  * Gemelo de CountrySelectInputComponent.vue.
@@ -15,29 +16,40 @@ import Field from './internal/Field.jsx'
  * emitía `change` en Vue, para que el formulario que ya lo consumía siga
  * funcionando igual.
  *
- * Los estilos van una vez por aplicación:
- *
- *     import 'react-phone-number-input/style.css'
+ * La hoja de la librería la importa el componente, igual que el de Vue. Antes
+ * la tenía que importar la aplicación y, si no lo hacía, el selector de país y
+ * el campo salían como controles nativos sin forma. El aspecto sale del tema
+ * (`phone`, `phoneInvalid`).
  */
 export default function CountrySelectInputComponent({
-    wrapperClass = 'fe-mb',
-    containerClass = 'fe-inline fe-w-full',
-    labelClass = 'ml-2 text-sm font-medium text-gray-900 dark:text-white',
+    // Sin valor, cada una sale de su token del tema.
+    wrapperClass = null,
+    containerClass = null,
+    labelClass = null,
     label = '',
     help = null,
     defaultPhone = '',
     defaultCountry = null,
     disabled = false,
     name = 'telephone',
+    id = null,
     placeholder = 'Ingresa un número telefónico',
     validators = null,
     onCountryChange,
     ...rest
 }) {
+    const theme = useTheme()
+
+    // Con el nombre como id, dos teléfonos en la misma página compartían id y
+    // la etiqueta del segundo enfocaba el primero.
+    const generatedId = useId()
+    const inputId = id ?? `${name}-${generatedId}`
+
     const [phone, setPhone] = useState(defaultPhone ? String(defaultPhone) : '')
     const [country, setCountry] = useState(defaultCountry ?? undefined)
 
     const valid = Boolean(phone) && isValidPhoneNumber(phone)
+    const invalid = ! valid && phone.length !== 0
 
     const announce = (nextPhone, nextCountry) => {
         const isValid = Boolean(nextPhone) && isValidPhoneNumber(nextPhone)
@@ -53,14 +65,15 @@ export default function CountrySelectInputComponent({
     }
 
     return (
-        <div className={wrapperClass}>
-            <div className={containerClass}>
-                {label ? <label className={labelClass} htmlFor={name}>{label}</label> : null}
+        <div className={wrapperClass ?? theme.field}>
+            {label ? <label className={labelClass ?? theme.label} htmlFor={inputId}>{label}</label> : null}
 
+            <div className={containerClass ?? theme.fieldInner}>
                 <PhoneInput
-                    id={name}
+                    id={inputId}
                     name={name}
-                    className={(! valid && phone.length !== 0) ? 'error' : undefined}
+                    className={joinClasses(theme.phone, invalid && theme.phoneInvalid)}
+                    aria-invalid={invalid || undefined}
                     international
                     countryCallingCodeEditable={false}
                     defaultCountry={defaultCountry ?? undefined}
@@ -79,9 +92,9 @@ export default function CountrySelectInputComponent({
                         announce(clean, country)
                     }}
                     {...rest} />
-
-                {help ? <p className="fe-text-muted">{help}</p> : null}
             </div>
+
+            {help ? <p className="fe-text-muted fe-text-sm">{help}</p> : null}
         </div>
     )
 }
