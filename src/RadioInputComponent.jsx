@@ -17,10 +17,11 @@ export default function RadioInputComponent({
 }) {
     const [current, set] = useControlled(value, onChange, '')
     const radioClass = useThemeClass('radio', customClass)
+    const labelClass = useThemeClass('label')
 
     return (
         <div className="fe-mb">
-            <label className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label className={labelClass}>
                 <input
                     className={radioClass}
                     type="radio"

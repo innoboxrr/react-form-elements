@@ -167,14 +167,14 @@ export default function FileInputComponent({
             </ul>
 
             {errors.length ? (
-                <ul className="fe-list text-red-600">
+                <ul className="fe-list fe-error">
                     {errors.map((entry, index) => (
                         <li key={`${entry.name}-error-${index}`}>{entry.name}: {entry.errors?.join(', ')}</li>
                     ))}
                 </ul>
             ) : null}
 
-            {overTotal ? <p className="text-red-600">El tamaño total supera el máximo permitido.</p> : null}
+            {overTotal ? <p className="fe-error">El tamaño total supera el máximo permitido.</p> : null}
 
             {! autoUpload && files.length ? (
                 <button type="button" className="fe-button" disabled={uploading || overTotal} onClick={upload}>

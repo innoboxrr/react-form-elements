@@ -21,13 +21,14 @@ export default function CheckboxInputComponent({
 }) {
     const [current, set] = useControlled(value, onChange, '')
     const boxClass = useThemeClass('checkbox', customClass)
+    const labelClass = useThemeClass('label')
 
     const isGroup = Array.isArray(current)
     const checked = isGroup ? current.includes(val) : Boolean(current)
 
     return (
         <div className="fe-mb">
-            <label className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label className={labelClass}>
                 <input
                     className={boxClass}
                     type="checkbox"

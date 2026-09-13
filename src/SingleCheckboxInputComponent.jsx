@@ -1,3 +1,5 @@
+import useThemeClass from './internal/useThemeClass.js'
+
 /**
  * Gemelo de SingleCheckboxInputComponent.vue.
  *
@@ -13,10 +15,11 @@ export default function SingleCheckboxInputComponent({
     ...rest
 }) {
     const htmlId = `${id}_${label}`
+    const labelClass = useThemeClass('label')
 
     return (
         <div className="fe-mb">
-            <label htmlFor={htmlId} className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label htmlFor={htmlId} className={labelClass}>
                 <input
                     id={htmlId}
                     className="fe-checkbox"

@@ -80,7 +80,7 @@ export default function CountrySelectInputComponent({
                     }}
                     {...rest} />
 
-                {help ? <p className="text-sm text-gray-500">{help}</p> : null}
+                {help ? <p className="fe-text-muted">{help}</p> : null}
             </div>
         </div>
     )
