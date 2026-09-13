@@ -32,6 +32,14 @@ const classTokens = (source) => [...source.matchAll(/(?:\bclass|\bclassName|\bcu
     .filter((token) => token !== '' && ! token.includes('${'))
     .map((token) => token.replace(/^['"`[({]+|['"`\]),}]+$/g, ''))
 
+/**
+ * Los valores por defecto de las props de clase: `labelClass = '…'`. Ahí se
+ * escondía Tailwind donde la búsqueda en `className` no mira.
+ */
+const defaultTokens = (source) => [...source.matchAll(/[A-Za-z]*(?:Class|Classes)\s*(?::\s*\{[^}]*?default:\s*|=\s*|:\s*)(['"`])([^'"`]*)\1/g)]
+    .flatMap((match) => match[2].split(/\s+/))
+    .filter((token) => token !== '')
+
 describe('clases de los componentes', () => {
     /**
      * Los componentes pintaban etiquetas, grupos, casillas y avisos con clases
@@ -46,6 +54,26 @@ describe('clases de los componentes', () => {
                 .map((token) => `${path.relative(root, file)}: ${token}`))
 
         expect(offenders).toEqual([])
+    })
+
+    /**
+     * CountrySelectInputComponent pasaba la prueba de arriba y aun así pintaba
+     * su etiqueta con Tailwind, desde el valor por defecto de `labelClass`.
+     */
+    it('ninguna prop de clase trae utilidades de Tailwind por defecto', () => {
+        const offenders = walk(path.join(root, 'src'))
+            .filter((file) => /\.(jsx?)$/.test(file))
+            .flatMap((file) => defaultTokens(fs.readFileSync(file, 'utf8'))
+                .filter((token) => UTILITY.test(token))
+                .map((token) => `${path.relative(root, file)}: ${token}`))
+
+        expect(offenders).toEqual([])
+    })
+
+    it('la comprobacion de valores por defecto encuentra lo que se escondia', () => {
+        const source = "labelClass = 'ml-2 dark:text-white fe-label'"
+
+        expect(defaultTokens(source).filter((token) => UTILITY.test(token))).toEqual(['ml-2', 'dark:text-white'])
     })
 
     it('la comprobacion reconoce una utilidad y respeta las clases propias', () => {
