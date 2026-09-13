@@ -31,6 +31,10 @@ export default function TextInputComponent({
     steps = null,
     readOnly = undefined,
     maskFormat = null,
+    // El botón de ver la contraseña no tiene texto visible: lo que lee el
+    // lector de pantalla lo decide la aplicación, en su idioma.
+    showPasswordLabel = 'Show password',
+    hidePasswordLabel = 'Hide password',
     value,
     onChange,
     onEnter,
@@ -107,7 +111,7 @@ export default function TextInputComponent({
                         type="button"
                         tabIndex={-1}
                         className="fe-password-toggle"
-                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        aria-label={showPassword ? hidePasswordLabel : showPasswordLabel}
                         onClick={() => setShowPassword((shown) => ! shown)}>
                         <IconComponent name={showPassword ? 'hide' : 'show'} />
                     </button>

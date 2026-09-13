@@ -14,12 +14,24 @@ const DEFAULT_MIMES = [
     'application/zip',
 ]
 
+const DEFAULT_LABELS = {
+    drop: 'Arrastra y suelta o haz clic',
+    maxFiles: 'Máximo de archivos alcanzado',
+    overTotal: 'El tamaño total supera el máximo permitido.',
+    upload: 'Subir',
+    uploading: 'Subiendo…',
+    failed: 'An error has occurred',
+}
+
 /**
  * Gemelo de FileInputComponent.vue: soltar o elegir archivos, validarlos y
  * subirlos a `uploadUrl`.
  *
  * Se conservan los tres avisos del original — `onStartUpload`,
  * `onFileListChange`, `onEndUpload` —, con nombres de prop de React.
+ *
+ * Los textos eran fijos en español: `labels` cambia los que haga falta y el
+ * resto conserva su valor.
  */
 export default function FileInputComponent({
     uploadUrl,
@@ -31,10 +43,12 @@ export default function FileInputComponent({
     totalMaxSize = 0,
     maxFiles = 1,
     validMimes = DEFAULT_MIMES,
+    labels = {},
     onStartUpload,
     onFileListChange,
     onEndUpload,
 }) {
+    const text = { ...DEFAULT_LABELS, ...labels }
     const input = useRef(null)
     const [files, setFiles] = useState([])
     const [errors, setErrors] = useState([])
@@ -85,7 +99,7 @@ export default function FileInputComponent({
                 const response = await fetch(uploadUrl, { method, body })
 
                 if (! response.ok) {
-                    throw new Error('An error has occurred')
+                    throw new Error(text.failed)
                 }
 
                 const data = await response.json()
@@ -140,7 +154,7 @@ export default function FileInputComponent({
                     setDragging(false)
                     push(Array.from(event.dataTransfer.files))
                 }}>
-                <p>{maxFilesReached ? 'Máximo de archivos alcanzado' : 'Arrastra y suelta o haz clic'}</p>
+                <p>{maxFilesReached ? text.maxFiles : text.drop}</p>
 
                 <input
                     ref={input}
@@ -174,11 +188,11 @@ export default function FileInputComponent({
                 </ul>
             ) : null}
 
-            {overTotal ? <p className="fe-error">El tamaño total supera el máximo permitido.</p> : null}
+            {overTotal ? <p className="fe-error">{text.overTotal}</p> : null}
 
             {! autoUpload && files.length ? (
                 <button type="button" className="fe-button" disabled={uploading || overTotal} onClick={upload}>
-                    {uploading ? 'Subiendo…' : 'Subir'}
+                    {uploading ? text.uploading : text.upload}
                 </button>
             ) : null}
         </div>

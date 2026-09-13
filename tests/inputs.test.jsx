@@ -6,6 +6,7 @@ import { useState } from 'react'
 import ButtonComponent from '../src/ButtonComponent.jsx'
 import CheckboxInputComponent from '../src/CheckboxInputComponent.jsx'
 import CodeInputComponent from '../src/CodeInputComponent.jsx'
+import FileInputComponent from '../src/FileInputComponent.jsx'
 import InputErrorComponent from '../src/InputErrorComponent.jsx'
 import MultiCheckboxInputComponent from '../src/MultiCheckboxInputComponent.jsx'
 import RadioInputComponent from '../src/RadioInputComponent.jsx'
@@ -61,6 +62,27 @@ describe('TextInputComponent', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Show password' }))
 
         expect(input).toHaveAttribute('type', 'text')
+    })
+
+    it('el boton de la contraseña dice lo que se le pasa', async () => {
+        render(<TextInputComponent type="password" name="secret" label="Secret" showPasswordLabel="Mostrar" hidePasswordLabel="Ocultar" />)
+
+        await userEvent.click(screen.getByRole('button', { name: 'Mostrar' }))
+
+        expect(screen.getByRole('button', { name: 'Ocultar' })).toBeInTheDocument()
+    })
+
+    /**
+     * Los textos de la zona de subida eran fijos en español.
+     */
+    it('la subida de archivos usa los textos que se le pasan y conserva el resto', () => {
+        const { rerender } = render(<FileInputComponent uploadUrl="/upload" labels={{ drop: 'Drop files here' }} />)
+
+        expect(screen.getByText('Drop files here')).toBeInTheDocument()
+
+        rerender(<FileInputComponent uploadUrl="/upload" maxFiles={0} />)
+
+        expect(screen.getByText('Máximo de archivos alcanzado')).toBeInTheDocument()
     })
 
     /**
