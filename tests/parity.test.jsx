@@ -13,9 +13,8 @@ import { resolve } from 'node:path'
  * `../form-elements/index.js`, que existe en el monorepo y no en el runner, y
  * por eso el CI fallaba con ENOENT mientras en local pasaba.
  *
- * Cuando el hermano sí está —trabajando en el monorepo— se comprueba además
- * que su lista siga siendo esta, así que la lista no puede quedarse atrás sin
- * que alguien se entere.
+ * La misma lista está en el test de paridad de la rama Vue. Cuando el hermano
+ * está a mano —trabajando en el monorepo— se comprueba además contra él.
  */
 const CANONICAL = [
     'AvatarInputComponent',
@@ -25,7 +24,11 @@ const CANONICAL = [
     'CodeInputComponent',
     'CodeMirrorComponent',
     'ColorPickerInputComponent',
+    'CommandPaletteComponent',
+    'ConfirmHostComponent',
     'CountrySelectInputComponent',
+    'DialogComponent',
+    'DrawerComponent',
     'DynamicGroupInputComponent',
     'EditorInputComponent',
     'FileDropInputComponent',
@@ -33,6 +36,7 @@ const CANONICAL = [
     'FqsInputComponent',
     'IconComponent',
     'InputErrorComponent',
+    'MenuComponent',
     'ModelSearchInputComponent',
     'MultiCheckboxInputComponent',
     'PolymorphicInputComponent',
@@ -41,6 +45,7 @@ const CANONICAL = [
     'SelectSearchInputComponent',
     'SimpleFileInputComponent',
     'SingleCheckboxInputComponent',
+    'SkeletonComponent',
     'StarsInputComponent',
     'SwitchComponent',
     'TagsInputComponent',
@@ -48,6 +53,7 @@ const CANONICAL = [
     'TextInputComponent',
     'TextareaInputComponent',
     'TimezoneSelectInputComponent',
+    'ToastRegionComponent',
 ]
 
 describe('paridad con innoboxrr-form-elements', () => {

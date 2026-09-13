@@ -1,7 +1,7 @@
 {
   "name": "innoboxrr-react-form-elements",
   "version": "3.3.0",
-  "description": "Gemelo React de innoboxrr-form-elements: los mismos componentes, los mismos nombres y el mismo contrato.",
+  "description": "Gemelo React de innoboxrr-form-elements: los mismos componentes, los mismos nombres y el mismo contrato, con diálogos, drawers, menús, avisos y paleta de comandos.",
   "type": "module",
   "main": "index.js",
   "exports": {
@@ -48,11 +48,12 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@floating-ui/dom": "^1.8.0",
     "@iconify/react": "^6.0.0",
     "@tinymce/tinymce-react": "^6.3.0",
     "@uiw/react-codemirror": "^4.25.11",
     "@yaireo/tagify": "^4.38.0",
-    "innoboxrr-form-core": "^2.3.0",
+    "innoboxrr-form-core": "^2.5.0",
     "innoboxrr-maskjs": "^2.0.0",
     "react-colorful": "^5.8.1",
     "react-phone-number-input": "^3.4.18",
