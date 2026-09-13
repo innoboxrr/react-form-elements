@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import useControlled from './internal/useControlled.js'
+import useTheme, { joinClasses } from './internal/useTheme.js'
 
 /**
  * Gemelo de CodeInputComponent.vue: las casillas de un código de un solo uso.
@@ -20,6 +21,7 @@ export default function CodeInputComponent({
     onChange,
     onComplete,
 }) {
+    const theme = useTheme()
     const [code, setCode] = useControlled(value, onChange, '')
     const inputs = useRef([])
     const [chars, setChars] = useState(() => Array.from({ length: fields }, (_, i) => (code ?? '')[i] ?? ''))
@@ -45,12 +47,12 @@ export default function CodeInputComponent({
         <div className={['code-input-container', className].filter(Boolean).join(' ')}>
             {title ? <p className="title">{title}</p> : null}
 
-            <div className="code-input fe-code-input">
+            <div className={joinClasses('code-input', theme.codeInput)}>
                 {chars.map((char, index) => (
                     <input
                         key={index}
                         ref={(element) => { inputs.current[index] = element }}
-                        className="w-14 h-14 rounded-lg border border-gray outline-none focus:outline-none focus:border-primary focus:ring-0 text-center transition-all"
+                        className={theme.codeCell}
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]*"

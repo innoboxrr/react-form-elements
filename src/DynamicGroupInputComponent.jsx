@@ -21,6 +21,7 @@ import SelectInputComponent from './SelectInputComponent.jsx'
 import TextInputComponent from './TextInputComponent.jsx'
 import TextareaInputComponent from './TextareaInputComponent.jsx'
 import useControlled from './internal/useControlled.js'
+import useTheme, { joinClasses } from './internal/useTheme.js'
 
 const COMPONENTS = {
     text: TextInputComponent,
@@ -38,15 +39,20 @@ const COMPONENTS = {
  * por su cuenta y trae ordenación **por teclado**, que ni SortableJS ni la API
  * nativa de arrastre dan. Aquí no es un detalle: un formulario que solo se
  * puede reordenar con el ratón no es accesible.
+ *
+ * El aspecto sale del tema, con el mismo marcado que la rama Vue: cada grupo es
+ * una superficie con su barra. Antes eran clases de Tailwind y colores escritos
+ * para el modo oscuro que el paquete no declara.
  */
 function SortableGroup({ id, children }) {
+    const theme = useTheme()
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
 
     return (
         <div
             ref={setNodeRef}
             style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
-            className="border rounded-lg bg-white dark:bg-slate-800 shadow-sm relative dark:border-slate-600">
+            className={theme.surface}>
             {children({ attributes, listeners })}
         </div>
     )
@@ -61,6 +67,7 @@ export default function DynamicGroupInputComponent({
     removeButtonLabel = 'Eliminar',
     itemLabel = 'Item',
 }) {
+    const theme = useTheme()
     const [current, set] = useControlled(value, onChange, [])
     const nextKey = useRef(0)
 
@@ -113,67 +120,66 @@ export default function DynamicGroupInputComponent({
     return (
         <div>
             {label ? (
-                <label className="block mb-4 ml-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+                <label className={theme.label}>
                     {label}
                 </label>
             ) : null}
 
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
                 <SortableContext items={keyed.map((group) => group.__key)} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-2 rounded-lg">
+                    <div className={theme.group}>
                         {keyed.map((group, index) => (
                             <SortableGroup key={group.__key} id={group.__key}>
                                 {({ attributes, listeners }) => (
                                     <>
-                                        <div className="flex justify-between items-center px-4 py-3 border-b bg-slate-50 dark:bg-slate-700 dark:border-slate-600 rounded-t-lg">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    type="button"
-                                                    aria-label={`Mover ${itemLabel} ${index + 1}`}
-                                                    className="cursor-move drag-handle text-slate-400"
-                                                    {...attributes}
-                                                    {...listeners}>
-                                                    <IconComponent name="drag" />
-                                                </button>
-                                                <h4 className="text-md font-semibold text-slate-800 dark:text-slate-100">
-                                                    {itemLabel} #{index + 1}
-                                                </h4>
-                                            </div>
+                                        <div className={theme.toolbar}>
+                                            <button
+                                                type="button"
+                                                aria-label={`Mover ${itemLabel} ${index + 1}`}
+                                                className={joinClasses(theme.iconButton, theme.dragHandle, 'drag-handle')}
+                                                {...attributes}
+                                                {...listeners}>
+                                                <IconComponent name="drag" />
+                                            </button>
 
-                                            <div className="flex items-center space-x-4 text-slate-400">
-                                                <button
-                                                    type="button"
-                                                    aria-label={`Duplicar ${itemLabel} ${index + 1}`}
-                                                    className="hover:text-blue-500 transition mr-2"
-                                                    onClick={() => set([
-                                                        ...keyed.slice(0, index + 1),
-                                                        { ...group, __key: `grupo-${nextKey.current++}` },
-                                                        ...keyed.slice(index + 1),
-                                                    ])}>
-                                                    <IconComponent name="copy" />
-                                                </button>
+                                            <h4 className={theme.groupTitle}>
+                                                {itemLabel} #{index + 1}
+                                            </h4>
 
-                                                <button
-                                                    type="button"
-                                                    aria-label={`${removeButtonLabel} ${index + 1}`}
-                                                    className="text-red-800 dark:text-red-400 text-sm"
-                                                    onClick={() => set(keyed.filter((_, position) => position !== index))}>
-                                                    <IconComponent name="delete" />
-                                                </button>
+                                            <span className={theme.toolbarSpacer} />
 
-                                                <button
-                                                    type="button"
-                                                    aria-label={`Expandir ${itemLabel} ${index + 1}`}
-                                                    aria-expanded={! group._collapsed}
-                                                    className="hover:text-slate-600 dark:hover:text-slate-300 transition"
-                                                    onClick={() => updateAt(index, '_collapsed', ! group._collapsed)}>
-                                                    <IconComponent name={group._collapsed ? 'up' : 'down'} />
-                                                </button>
-                                            </div>
+                                            <button
+                                                type="button"
+                                                aria-label={`Duplicar ${itemLabel} ${index + 1}`}
+                                                className={theme.iconButton}
+                                                onClick={() => set([
+                                                    ...keyed.slice(0, index + 1),
+                                                    { ...group, __key: `grupo-${nextKey.current++}` },
+                                                    ...keyed.slice(index + 1),
+                                                ])}>
+                                                <IconComponent name="copy" />
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                aria-label={`${removeButtonLabel} ${index + 1}`}
+                                                className={joinClasses(theme.iconButton, theme.iconButtonDanger)}
+                                                onClick={() => set(keyed.filter((_, position) => position !== index))}>
+                                                <IconComponent name="delete" />
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                aria-label={`Expandir ${itemLabel} ${index + 1}`}
+                                                aria-expanded={! group._collapsed}
+                                                className={theme.iconButton}
+                                                onClick={() => updateAt(index, '_collapsed', ! group._collapsed)}>
+                                                <IconComponent name={group._collapsed ? 'up' : 'down'} />
+                                            </button>
                                         </div>
 
                                         {! group._collapsed ? (
-                                            <div className="p-4">
+                                            <div className="fe-card-body">
                                                 {inputsConfig.map((field) => {
                                                     const Component = COMPONENTS[field.type] ?? TextInputComponent
 
@@ -208,7 +214,7 @@ export default function DynamicGroupInputComponent({
 
             <button
                 type="button"
-                className="fe-button fe-mt"
+                className={joinClasses(theme.button, 'fe-mt')}
                 onClick={() => set([...keyed, emptyGroup()])}>
                 {addButtonLabel}
             </button>

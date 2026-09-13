@@ -34,7 +34,7 @@ export default function FqsInputComponent({
 
     return (
         <div>
-            <h4>{text.title}</h4>
+            <h4 className="fe-group-title fe-mb-sm">{text.title}</h4>
 
             {items.map((item, index) => (
                 <div key={index} className="fe-card fe-card-sm fe-card-body fe-mb">

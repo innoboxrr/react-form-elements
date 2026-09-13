@@ -1,8 +1,14 @@
 import { useRef, useState } from 'react'
+import IconComponent from './IconComponent.jsx'
+import useTheme from './internal/useTheme.js'
 
 /**
  * Gemelo de FileDropInputComponent.vue. `onFilesChange` recibe un array de
  * File, venga de arrastrar o del diálogo.
+ *
+ * `fe-file-drop` no lo definía ninguna hoja, así que la zona salía sin borde ni
+ * resalte. Ahora sale del tema, con el mismo icono y el mismo texto secundario
+ * que la rama Vue.
  */
 export default function FileDropInputComponent({
     multiple = false,
@@ -11,18 +17,20 @@ export default function FileDropInputComponent({
     subText = 'o haz clic para seleccionar los archivos.',
     onFilesChange,
 }) {
+    const theme = useTheme()
     const input = useRef(null)
     const [dragging, setDragging] = useState(false)
 
     return (
         <div
-            className="fe-file-drop"
+            className={theme.fileDrop}
             data-dragging={dragging}
             role="button"
             tabIndex={0}
             onClick={() => input.current?.click()}
             onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
                     input.current?.click()
                 }
             }}
@@ -36,8 +44,10 @@ export default function FileDropInputComponent({
                 setDragging(false)
                 onFilesChange?.(Array.from(event.dataTransfer.files))
             }}>
+            <IconComponent name="media" size={32} />
+
             <p>{mainText}</p>
-            <p>{subText}</p>
+            <p className={theme.fileDropHint}>{subText}</p>
 
             <input
                 ref={input}
