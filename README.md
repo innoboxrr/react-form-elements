@@ -1,12 +1,15 @@
 # innoboxrr-react-form-elements
 
-Gemelo React de [`innoboxrr-form-elements`](../form-elements). Los mismos 29
-componentes, con los mismos nombres.
+Gemelo React de [`innoboxrr-form-elements`](../form-elements). Los mismos 37
+componentes, con los mismos nombres: los controles de formulario y las piezas de
+escritorio (`DialogComponent`, `DrawerComponent`, `MenuComponent`,
+`CommandPaletteComponent`, `ToastRegionComponent`, `ConfirmHostComponent` y
+`SkeletonComponent`).
 
 Los nombres coinciden a propósito: `larapack-generator` emite el mismo
 `form_component` del `laraimport.json` para Vue y para React, así que un nombre
-distinto rompería esa simetría. Hay un test (`tests/parity.test.jsx`) que falla
-si un paquete exporta algo que el otro no.
+distinto rompería esa simetría. Hay un test de paridad en cada repositorio que
+falla si un paquete exporta algo que el otro no.
 
 ## Instalación
 
@@ -61,6 +64,36 @@ recibe el valor y no el `$event`. Para el evento del DOM están `onInput`,
 Todos los controles funcionan también **sin** `value`: se gobiernan solos. Eso
 permite montarlos en una prueba o en un formulario no controlado sin escribir
 estado alrededor.
+
+## Piezas de escritorio
+
+Sobre `<dialog>`, el atributo `popover` y Floating UI, con el mismo
+comportamiento que la rama Vue. Lo que cambia es la forma de pasar las cosas:
+
+| Vue | React |
+|---|---|
+| `v-model:open` | `open` + `onOpenChange(abierto)` |
+| slot `footer` / `header` con `{ close }` | prop `footer` / `header`: un nodo o una función `({ close }) => …` |
+| slot `trigger` de `MenuComponent` | `renderTrigger({ toggle, open, loading, triggerProps })` |
+| `@select` | `onSelect(item)` |
+| `:save` de `ClickToEditComponent` | `onSave(valor)` |
+
+```jsx
+import { DrawerComponent, ToastRegionComponent, ConfirmHostComponent } from 'innoboxrr-react-form-elements'
+import { notifySuccess } from 'innoboxrr-form-core'
+
+<DrawerComponent open={abierto} onOpenChange={setAbierto} title="Nuevo producto"
+    footer={({ close }) => <button type="button" onClick={close}>Cancelar</button>}>
+    <CreateForm onSubmit={(producto) => { notifySuccess('Producto creado'); setAbierto(false) }} />
+</DrawerComponent>
+
+// una vez, en la raíz
+<ToastRegionComponent />
+<ConfirmHostComponent />
+```
+
+React no escribe el atributo `autofocus` en el DOM, así que lo que tiene que
+recibir el foco al abrir un diálogo se marca con `data-autofocus`.
 
 ## Las librerías de debajo
 
