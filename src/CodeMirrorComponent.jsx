@@ -1,15 +1,10 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { css } from '@codemirror/lang-css'
-import { html } from '@codemirror/lang-html'
-import { javascript } from '@codemirror/lang-javascript'
-import { json } from '@codemirror/lang-json'
 
 import Field from './internal/Field.jsx'
+import { cachedLanguage, loadLanguage } from './internal/codeMirrorLanguages.js'
 import useControlled from './internal/useControlled.js'
-
-const LANGUAGES = { javascript, json, html, css }
 
 /**
  * Gemelo de CodeMirrorComponent.vue.
@@ -22,6 +17,14 @@ const LANGUAGES = { javascript, json, html, css }
  * Antes esto montaba CodeMirror a mano con un `useEffect` y caía a un
  * `<textarea>` si las dependencias no estaban. Eran opcionales, y por tanto
  * casi nunca estaban.
+ *
+ * El lenguaje llega con import(): importarlos los cuatro de forma estática
+ * hacía que el piloto de la aplicación base cargara 580 kB para un editor que
+ * solo edita JSON. Mientras llega, el editor ya funciona como texto plano.
+ *
+ * one-dark, en cambio, sigue siendo estático: `@uiw/react-codemirror` lo
+ * importa y lo reexporta él mismo (esm/getDefaultExtensions.js), así que
+ * cargarlo aquí con import() no quitaría ni un byte del bundle.
  */
 export default function CodeMirrorComponent({
     label = '',
@@ -38,11 +41,29 @@ export default function CodeMirrorComponent({
 }) {
     const [current, set] = useControlled(value, onChange, '')
 
-    const extensions = useMemo(() => {
-        const support = LANGUAGES[language]
+    // Un lenguaje ya cargado entra en el primer render; uno desconocido, nunca.
+    const [support, setSupport] = useState(() => cachedLanguage(language))
 
-        return support ? [support()] : []
+    useEffect(() => {
+        // Descarta la respuesta de un lenguaje que ya no es el pedido.
+        let active = true
+
+        setSupport(cachedLanguage(language))
+
+        loadLanguage(language).then((next) => {
+            if (active) {
+                setSupport(next)
+            }
+        })
+
+        return () => {
+            active = false
+        }
     }, [language])
+
+    // El binding reconfigura el editor cuando cambia la identidad de este
+    // array, así que solo cambia cuando llega otro lenguaje.
+    const extensions = useMemo(() => (support ? [support] : []), [support])
 
     return (
         <Field label={label} help={help} inline={false}>
