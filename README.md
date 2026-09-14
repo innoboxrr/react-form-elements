@@ -138,6 +138,17 @@ Tres notas sobre esas elecciones:
 En `format`: `*` es un dígito, `a` una letra, `A` letra o dígito. Todo lo demás
 es un literal. Ver [`innoboxrr-maskjs`](../maskjs).
 
+## Editor de código
+
+`CodeMirrorComponent` carga el lenguaje bajo demanda. `language` (`javascript`
+por defecto, `json`, `html` o `css`) llega con `import()`, así que una
+aplicación solo descarga el que usa: un editor de JSON ya no se lleva html, css
+y javascript. Mientras llega, el editor funciona como texto plano. Un lenguaje
+fuera de esa lista lo deja en texto plano.
+
+`theme` es `dark` (por defecto) o `light`. one-dark va siempre en el bundle
+porque lo importa `@uiw/react-codemirror`, no este paquete.
+
 ## Diferencias deliberadas
 
 - **`MultiCheckboxInputComponent`** deriva la selección del valor. La versión
