@@ -1,6 +1,6 @@
 {
   "name": "innoboxrr-react-form-elements",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "Gemelo React de innoboxrr-form-elements: los mismos componentes, los mismos nombres y el mismo contrato, con diálogos, drawers, menús, avisos y paleta de comandos.",
   "type": "module",
   "main": "index.js",
@@ -33,7 +33,7 @@
   "author": "Homero Raul Vargas Cruz",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12"
   },
   "peerDependencies": {
     "react": "^19.0.0",
@@ -63,11 +63,11 @@
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
-    "@vitejs/plugin-react": "^5.0.0",
-    "jsdom": "^25.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "jsdom": "^31.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "vite": "^7.1.0",
-    "vitest": "^3.0.0"
+    "vite": "^8.0.0",
+    "vitest": "^5.0.0"
   }
 }

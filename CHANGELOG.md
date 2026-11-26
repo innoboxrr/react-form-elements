@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.9.0 — 2026-11-26
+
+### Cambiado
+
+- **Las pruebas corren con Vite 8 y Vitest 5.** `vite` ^7.1 → ^8.0,
+  `vitest` ^3.0 → ^5.0, `@vitejs/plugin-react` ^5.0 → ^6.0 y `jsdom` ^25 → ^31.
+  Es lo que permite subir la línea base de JS del ecosistema.
+- **`engines.node` pasa de `>=20` a `>=22.12`.** Node 20 es EOL desde
+  2026-04-30 y Vitest 5 exige `^22.12 || >=24`. CI prueba Node 22 y 24.
+
+### Sin cambios
+
+- Ningún componente cambia y `peerDependencies` sigue en React 19.
+- jsdom 31 oculta un `[popover]` cerrado, como el navegador, pero no
+  implementa `showPopover()`: ningún popover se podía abrir y los avisos de
+  `ToastRegionComponent` quedaban fuera del árbol accesible. No es un fallo del
+  componente —un navegador con la regla también tiene la API—; `tests/setup.js`
+  neutraliza esa regla solo cuando falta la API.
+
 ## 3.8.0 — 2026-09-13
 
 ### Cambiado
